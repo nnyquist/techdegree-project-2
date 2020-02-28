@@ -17,7 +17,10 @@ FSJS project 2 - List Filter and Pagination
    scoped to that function.
 ***/
 
-
+// Create global variables to house list items and pagination number
+const students = document.querySelector('.student-list')
+    .children;
+const paginationNum = 10;
 
 
 /*** 
@@ -35,6 +38,21 @@ FSJS project 2 - List Filter and Pagination
        "invoke" the function 
 ***/
 
+function showPage(list, page) {
+    // start index of the list items to be displayed
+    const startIndex = (page * paginationNum) - paginationNum;
+
+    // end index of the list items to be displayed
+    const endIndex = (page * paginationNum);
+
+    // loop through the list and display any item that is within the index range above
+    for (i = 0; i <= list.length; i += 1) {
+        if (i >= startIndex && i < endIndex) {
+            return list[i];
+        }   
+    }
+}
+
 
 
 
@@ -43,6 +61,27 @@ FSJS project 2 - List Filter and Pagination
    functionality to the pagination buttons.
 ***/
 
+function appendPageLinks(list) {
+    // create DOM elements
+    const div = document.createElement('div');
+    div.className = 'pagination';
+
+    const ul = document.createElement('ul');
+    const li = document.createElement('li');
+
+    const aLink = document.createElement('a');
+    aLink.href = '#';
+
+    // for every page add up to 10 students to ul element
+    const pageLimit = Math.ceil(list.length/paginationNum);
+    for (i = 0; i <= pageLimit; i += 1){
+        aLink.textContent = i;
+        ul.appendChild(
+            li.appendChild(aLink)
+        );
+    }
+    console.log(ul);
+}
 
 
 
