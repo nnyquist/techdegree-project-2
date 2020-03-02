@@ -3,21 +3,20 @@ Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
 ******************************************/
 
-// create function to handle element creation, class, type, text
-function creation() {
-    // want to refactor and make a function that holds other functions
+// create function to handle element creation
+function creation(elementName, property, value) {
+    const element = document.createElement(elementName);
+    element[property] = value;
+    return element;
 }
 
 // add search component
-const searchBox = document.createElement('div');
-searchBox.className = 'student-search';
+const searchBox = creation('div', 'className', 'student-search');
 
-const searchInput = document.createElement('input');
-searchInput.type = 'text';
+const searchInput = creation('input', 'type', 'text');
 searchInput.placeholder = 'Search for students ...';
 
-const searchButton = document.createElement('button');
-searchButton.textContent = 'Search';
+const searchButton = creation('button', 'textContent', 'Search');
 
 searchBox.appendChild(searchInput);
 searchBox.appendChild(searchButton);
@@ -28,6 +27,7 @@ document.querySelector('.page-header').appendChild(searchBox);
 const students = document.querySelector('.student-list')
     .children;
 const paginationNum = 10;
+const divPage = document.querySelector('.page');
 
 
 // create showPage function to limit to students by paginationNum
@@ -53,12 +53,8 @@ function showPage(list, page) {
 
 // create appendPageLinks function to make links for each 10 student page
 function appendPageLinks(list) {
-    // div element with class page
-    const divPage = document.querySelector('.page');
-    
     // create DOM elements
-    const div = document.createElement('div');
-    div.className = 'pagination';
+    const div = creation('div', 'className', 'pagination');
 
     const ul = document.createElement('ul');
 
@@ -70,8 +66,7 @@ function appendPageLinks(list) {
         // create the li and a elements
         const li = document.createElement('li');
         
-        const aLink = document.createElement('a');
-        aLink.href = '#';
+        const aLink = creation('a', 'href', '#');
         aLink.textContent = i + 1;
 
         // add active class name to first pagination link
@@ -87,6 +82,22 @@ function appendPageLinks(list) {
     // append the ul to the div, the div to the divPage
     div.appendChild(ul);
     divPage.appendChild(div);
+
+    // isolate page links
+    let pageLinks = document.querySelectorAll('.pagination a')
+
+    //add a "click" event listener to each A element
+    for (i = 0; i < pageLinks.length; i += 1){
+        let a = pageLinks[i];
+
+        a.addEventListener('click', (e) => {
+            for (j = 0; j < pageLinks.length; j ++){
+                pageLinks[j].className = '';
+            }
+            e.target.className = 'active';
+            showPage(list, e.target.textContent)
+        })
+    }
 }
 
 // search function, returns array of records in list that match searchText
@@ -96,10 +107,11 @@ function searchNames(list, searchText){
 
     // loop over list and append to array if a match exists
     for (i = 0; i < list.length; i ++){
+        listItem = list[i];
         if (searchText.length !== 0 &&
-            list[i].textContent.toLowerCase().includes(searchText
+            listItem.textContent.toLowerCase().includes(searchText
                 .toLowerCase())){
-                matchArray.push(list[i]);
+                matchArray.push(listItem);
             }
     }
 
@@ -121,22 +133,23 @@ noResultsP.textContent = "I'm sorry, there is no student that matches your searc
 
 noResultsDiv.appendChild(noResultsP);
 const ulPage = document.querySelector('.pagination');
-document.querySelector('.page').insertBefore(noResultsDiv, ulPage);
+divPage.insertBefore(noResultsDiv, ulPage);
+
+// function to return all pagination links
+// pageLinks = document.querySelectorAll('.pagination a')
 
 // add a "click" event listener to each A element
-pageLinks = document.querySelectorAll('.pagination a')
+// for (i = 0; i < pageLinks.length; i += 1){
+//     let a = pageLinks[i];
 
-for (i = 0; i < pageLinks.length; i += 1){
-    let a = pageLinks[i];
-
-    a.addEventListener('click', (e) => {
-        for (j = 0; j < pageLinks.length; j ++){
-            pageLinks[j].className = '';
-        }
-        e.target.className = 'active';
-        showPage(students, e.target.textContent)
-    })
-}
+//     a.addEventListener('click', (e) => {
+//         for (j = 0; j < pageLinks.length; j ++){
+//             pageLinks[j].className = '';
+//         }
+//         e.target.className = 'active';
+//         showPage(students, e.target.textContent)
+//     })
+// }
 
 
 // click event for search box if button clicked
@@ -151,7 +164,7 @@ searchButton.addEventListener('click', (e) => {
     }
 
     // drop the pagination class div
-    document.querySelector('.page').removeChild(
+    divPage.removeChild(
         document.querySelector('.pagination')
     );
     // hide all students
@@ -177,7 +190,7 @@ searchInput.addEventListener('keyup', (e) => {
     }
 
     // drop the pagination class div
-    document.querySelector('.page').removeChild(
+    divPage.removeChild(
         document.querySelector('.pagination')
     );
     // hide all students
